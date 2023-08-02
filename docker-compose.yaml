@@ -1,0 +1,98 @@
+version: '3'
+
+services:
+
+  mysql_db:
+    image: mysql:8.0.34-debian
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: $(MYSQL_ROOT_PASS)
+    ports:
+      - "6603:3306"
+    volumes:
+      - ./volumes/mysql_data:/var/lib/mysql
+
+  clickhouse:
+    image: clickhouse/clickhouse-server:23.7.1.2470-alpine
+    restart: always
+    environment:
+      CLICKHOUSE_DB: $(CH_DB)
+      CLICKHOUSE_USER: $(CH_USER)
+      CLICKHOUSE_PASSWORD: $(CH_PASS)
+      CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT: 1
+    ports:
+      - "8123:8123"
+      - "9000:9000"
+    volumes:
+      - ./volumes/ch_data:/var/lib/clickhouse
+      - ./volumes/ch_logs:/var/log/clickhouse-server
+
+  kafka:
+    image: confluentinc/cp-kafka:7.3.3
+    restart: always
+    hostname: broker
+    container_name: broker
+    networks:
+      - Kafka_zoo_connectors
+    ports:
+      - "9092:9092"
+      - "9101:9101"
+      - "29092:29092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT'
+      KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://broker:29092,PLAINTEXT_HOST://localhost:9092'
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_PROCESS_ROLES: 'broker,controller'
+      KAFKA_NODE_ID: 1
+      KAFKA_CONTROLLER_QUORUM_VOTERS: '1@broker:29093'
+      KAFKA_LISTENERS: 'PLAINTEXT://broker:29092,CONTROLLER://broker:29093,PLAINTEXT_HOST://0.0.0.0:9092'
+      KAFKA_INTER_BROKER_LISTENER_NAME: 'PLAINTEXT'
+      KAFKA_CONTROLLER_LISTENER_NAMES: 'CONTROLLER'
+      KAFKA_LOG_DIRS: '/tmp/kraft-combined-logs'
+    volumes:
+      - ./volumes/kraft-combined-logs:/tmp/kraft-combined-logs/
+      - ./volumes/update_run.sh:/tmp/update_run.sh
+    command: "bash -c 'if [ ! -f /tmp/update_run.sh ]; then echo \"ERROR: Did you forget the update_run.sh file that came with this docker-compose.yml file?\" && exit 1 ; else /tmp/update_run.sh && /etc/confluent/docker/run ; fi'"
+
+  schema-registry:
+    image: confluentinc/cp-schema-registry:7.3.3
+    hostname: schema-registry
+    container_name: schema-registry
+    networks:
+      - Kafka_zoo_connectors
+    depends_on:
+      - kafka
+    ports:
+      - "8081:8081"
+    environment:
+      SCHEMA_REGISTRY_HOST_NAME: schema-registry
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: 'broker:29092'
+      SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:8081
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: kafka-ui
+    restart: always
+    networks:
+      - Kafka_zoo_connectors
+    depends_on:
+      - kafka
+    ports:
+      - 8085:8080
+    environment:
+      - KAFKA_CLUSTERS_0_NAME= Main
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS= broker:29092
+      - DYNAMIC_CONFIG_ENABLED= true
+      - KAFKA_CLUSTERS_0_KAFKACONNECT_0_NAME=kafka-connect
+      - KAFKA_CLUSTERS_0_KAFKACONNECT_0_ADDRESS=http://connect:8083
+      - KAFKA_CLUSTERS_0_SCHEMAREGISTRY=http://schema-registry:8081
+
+networks:
+  Kafka_zoo_connectors:
+    name: Kafka_zoo_connectors
+    driver: "bridge"
