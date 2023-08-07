@@ -2,22 +2,27 @@ import mysql.connector
 import os
 
 
-class MySQL(mysql.connector.connect):
+class MySQL:
 
     def __init__(self):
-        super().__init__(host="localhost", user="root", password=os.environ['MYSQL_ROOT_PASS'],
-                         database=os.environ['MYSQL_DB'])
+        self.db = mysql.connector.connect(
+            host="localhost",
+            user="root",
+            password=os.environ['MYSQL_ROOT_PASS'],
+            database=os.environ['MYSQL_DB'],
+            port=6603)
+        self.cursor = self.db.cursor()
 
     def query(self, query, var=()):
         try:
-            self.cursor.exexute(query, var)
-            self.commit()
+            self.cursor.execute(query, var)
+            self.db.commit()
         except Exception as e:
             print("Could not execute query: ", e)
 
     def select(self, query, var=()):
         try:
-            self.cursor.exexute(query, var)
+            self.cursor.execute(query, var)
             return self.cursor.fetchall()
         except Exception as e:
             print("Could not execute query: ", e)
@@ -25,4 +30,4 @@ class MySQL(mysql.connector.connect):
 
     def close_connection(self):
         self.cursor.close()
-        self.close()
+        self.db.close()

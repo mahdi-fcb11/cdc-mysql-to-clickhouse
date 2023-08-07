@@ -23,6 +23,7 @@ class Generator:
         """
         var = self.generate_data()
         self.db.query(query, var)
+        print("inserted a new data")
 
     def update(self):
         query = "SELECT id FROM users"
@@ -31,6 +32,7 @@ class Generator:
         address = self.fake.address()
         update_query = "UPDATE users SET address = (%s) WHERE id = (%s)"
         self.db.query(update_query, (address, up_id))
+        print(f"updated data with id = {up_id}.")
 
     def delete(self):
         query = "SELECT id FROM users"
@@ -38,6 +40,7 @@ class Generator:
         del_id = random.choice(idx)[0]
         delete_query = "DELETE FROM users WHERE id = (%s)"
         self.db.query(delete_query, (del_id,))
+        print(f"deleted data with id = {del_id}")
 
     def runner(self):
         chosen = random.choices([self.update, self.delete, self.insert], weights=(0.25, 0.05, 0.7), k=1)[0]
