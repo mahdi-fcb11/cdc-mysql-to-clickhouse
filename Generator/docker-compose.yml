@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+
+  mysql_db:
+    image: mysql:8.0.34-debian
+    hostname: mysql_db
+    container_name: mysql_db
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    networks:
+      - Kafka_zoo_connectors
+    environment:
+      MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASS
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./volumes/mysql_data:/var/lib/mysql
+
+  clickhouse:
+    image: clickhouse/clickhouse-server:23.7.1.2470
+    restart: always
+    environment:
+      CLICKHOUSE_DB: $CH_DB
+      CLICKHOUSE_USER: $CH_USER
+      CLICKHOUSE_PASSWORD: $CH_PASS
+      CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT: 1
+    ports:
+      - "8123:8123"
+      - "9000:9000"
+    volumes:
+      - ./volumes/ch_data:/var/lib/clickhouse
+      - ./volumes/ch_logs:/var/log/clickhouse-server
+
+networks:
+  Kafka_zoo_connectors:
+    external:
+      name: Kafka_zoo_connectors

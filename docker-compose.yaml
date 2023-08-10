@@ -2,41 +2,12 @@ version: '3.8'
 
 services:
 
-  mysql_db:
-    image: mysql:8.0.34-debian
-    hostname: db
-    container_name: db
-    networks:
-      - Kafka_zoo_connectors
-    command: --default-authentication-plugin=mysql_native_password
-    restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: $(MYSQL_ROOT_PASS)
-    ports:
-      - "6603:3306"
-    volumes:
-      - ./volumes/mysql_data:/var/lib/mysql
-
-  clickhouse:
-    image: clickhouse/clickhouse-server:23.7.1.2470-alpine
-    restart: always
-    environment:
-      CLICKHOUSE_DB: $(CH_DB)
-      CLICKHOUSE_USER: $(CH_USER)
-      CLICKHOUSE_PASSWORD: $(CH_PASS)
-      CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT: 1
-    ports:
-      - "8123:8123"
-      - "9000:9000"
-    volumes:
-      - ./volumes/ch_data:/var/lib/clickhouse
-      - ./volumes/ch_logs:/var/log/clickhouse-server
-
   kafka:
     image: confluentinc/cp-kafka:7.3.3
     restart: always
     hostname: broker
     container_name: broker
+    user: root
     networks:
       - Kafka_zoo_connectors
     ports:
@@ -100,8 +71,6 @@ services:
     image: confluentinc/cp-kafka-connect:7.3.3
     hostname: connect
     container_name: connect
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
     networks:
       - Kafka_zoo_connectors
     depends_on:
