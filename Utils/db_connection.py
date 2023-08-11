@@ -10,7 +10,7 @@ class MySQL:
             user="root",
             password=os.environ['MYSQL_ROOT_PASS'],
             database=os.environ['MYSQL_DB'],
-            port=6603)
+            port=3306)
         self.cursor = self.db.cursor()
 
     def query(self, query, var=()):

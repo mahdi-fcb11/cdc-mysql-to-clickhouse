@@ -71,6 +71,9 @@ services:
     image: confluentinc/cp-kafka-connect:7.3.3
     hostname: connect
     container_name: connect
+    restart: always
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     networks:
       - Kafka_zoo_connectors
     depends_on:

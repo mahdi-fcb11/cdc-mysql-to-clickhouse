@@ -2,10 +2,8 @@ version: '3.8'
 
 services:
 
-  mysql_db:
+  mysql:
     image: mysql:8.0.34-debian
-    hostname: mysql_db
-    container_name: mysql_db
     command: --default-authentication-plugin=mysql_native_password
     restart: always
     networks:
@@ -20,6 +18,8 @@ services:
   clickhouse:
     image: clickhouse/clickhouse-server:23.7.1.2470
     restart: always
+    networks:
+      - Kafka_zoo_connectors
     environment:
       CLICKHOUSE_DB: $CH_DB
       CLICKHOUSE_USER: $CH_USER

@@ -8,4 +8,4 @@ GEN = Generator()
 if __name__ == '__main__':
     while True:
         GEN.runner()
-        sleep(10)
+        sleep(5)

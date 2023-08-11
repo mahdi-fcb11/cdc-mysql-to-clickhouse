@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+
+  spark-master:
+    image: bitnami/spark:3.2.4
+    ports:
+      - "8080:8080"
+      - "7077:7077"
+    networks:
+      - Kafka_zoo_connectors
+    environment:
+      - SPARK_MODE=master
+    volumes:
+      - ../volumes/spark:/bitnami/spark
+
+  spark-worker:
+    image: bitnami/spark:3.2.4
+    networks:
+      - Kafka_zoo_connectors
+    environment:
+      - SPARK_MODE=worker
+      - SPARK_MASTER_URL=spark://spark-master:7077
+      - SPARK_WORKER_MEMORY=2G
+      - SPARK_WORKER_CORES=2
+
+
+networks:
+  Kafka_zoo_connectors:
+    external:
+      name: Kafka_zoo_connectors
