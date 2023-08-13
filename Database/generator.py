@@ -23,7 +23,7 @@ class Generator:
         """
         var = self.generate_data()
         self.db.query(query, var)
-        get_module_logger("Generator").info("inserted a new data")
+        get_module_logger("Database").info("inserted a new data")
 
     def update(self):
         query = "SELECT id FROM users"
@@ -32,7 +32,7 @@ class Generator:
         address = self.fake.address()
         update_query = "UPDATE users SET address = (%s), updated_at = CURRENT_TIMESTAMP WHERE id = (%s)"
         self.db.query(update_query, (address, up_id))
-        get_module_logger("Generator").info(f"updated data with id = {up_id}.")
+        get_module_logger("Database").info(f"updated data with id = {up_id}.")
 
     def delete(self):
         query = "SELECT id FROM users"
@@ -40,7 +40,7 @@ class Generator:
         del_id = random.choice(idx)[0]
         delete_query = "DELETE FROM users WHERE id = (%s)"
         self.db.query(delete_query, (del_id,))
-        get_module_logger("Generator").info(f"deleted data with id = {del_id}")
+        get_module_logger("Database").info(f"deleted data with id = {del_id}")
 
     def runner(self):
         chosen = random.choices(

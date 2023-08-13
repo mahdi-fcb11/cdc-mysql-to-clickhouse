@@ -4,10 +4,8 @@ services:
 
   kafka:
     image: confluentinc/cp-kafka:7.3.3
-    restart: always
     hostname: broker
     container_name: broker
-    user: root
     networks:
       - Kafka_zoo_connectors
     ports:
@@ -30,8 +28,8 @@ services:
       KAFKA_CONTROLLER_LISTENER_NAMES: 'CONTROLLER'
       KAFKA_LOG_DIRS: '/tmp/kraft-combined-logs'
     volumes:
-      - ./volumes/kraft-combined-logs:/tmp/kraft-combined-logs/
-      - ./volumes/update_run.sh:/tmp/update_run.sh
+      - ../volumes/kraft-combined-logs:/tmp/kraft-combined-logs/
+      - ../volumes/update_run.sh:/tmp/update_run.sh
     command: "bash -c 'if [ ! -f /tmp/update_run.sh ]; then echo \"ERROR: Did you forget the update_run.sh file that came with this docker-compose.yml file?\" && exit 1 ; else /tmp/update_run.sh && /etc/confluent/docker/run ; fi'"
 
   schema-registry:
@@ -72,8 +70,6 @@ services:
     hostname: connect
     container_name: connect
     restart: always
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
     networks:
       - Kafka_zoo_connectors
     depends_on:
@@ -95,10 +91,10 @@ services:
       CONNECT_KEY_CONVERTER: org.apache.kafka.connect.storage.StringConverter
       CONNECT_VALUE_CONVERTER: io.confluent.connect.avro.AvroConverter
       CONNECT_VALUE_CONVERTER_SCHEMA_REGISTRY_URL: http://schema-registry:8081
-      CONNECT_PLUGIN_PATH: /usr/share/java,/u01/plugins
+      CONNECT_PLUGIN_PATH: /usr/share/java,/connect/plugins
     volumes:
-      - ./volumes/u01/plugins/:/u01/plugins/
-      - ./volumes/kafka_connect/:/etc/kafka-connect/jars
+      - ../volumes/connect_plugins/:/connect/plugins
+      - ../volumes/kafka_connect/:/etc/kafka-connect/jars
 
 networks:
   Kafka_zoo_connectors:

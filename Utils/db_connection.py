@@ -6,11 +6,11 @@ class MySQL:
 
     def __init__(self):
         self.db = mysql.connector.connect(
-            host="localhost",
+            host=os.environ['MYSQL_HOST'],
             user="root",
             password=os.environ['MYSQL_ROOT_PASS'],
             database=os.environ['MYSQL_DB'],
-            port=3306)
+            port=os.environ['MYSQL_PORT'])
         self.cursor = self.db.cursor()
 
     def query(self, query, var=()):

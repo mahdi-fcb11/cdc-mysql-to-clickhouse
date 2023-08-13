@@ -1,4 +1,4 @@
-from Generator.generator import Generator
+from Database.generator import Generator
 from time import sleep
 
 

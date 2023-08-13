@@ -5,7 +5,7 @@ from pyspark.sql.types import StructType, StructField, StringType, IntegerType, 
 import pyspark
 import os
 
-spark = (SparkSession.builder.appName("test-spark_3").master("spark://localhost:7077").getOrCreate())
+spark = (SparkSession.builder.appName("test-spark").master("spark://192.168.1.147:7077").getOrCreate())
 # spark = (SparkSession.builder.appName("test-spark_4").master("local[*]").getOrCreate())
 # Spark session & context
 spark.sparkContext.setLogLevel('WARN')

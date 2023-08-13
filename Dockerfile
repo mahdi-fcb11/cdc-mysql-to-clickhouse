@@ -3,11 +3,11 @@ FROM python3.9
 RUN curl -i -X POST -H "Accept:application/json" \
     -H  "Content-Type:application/json" http://localhost:8083/connectors/ \
     -d '{
-      "name": "mycnc1",
+      "name": "mycnc",
       "config": {
             "connector.class": "io.debezium.connector.mysql.MySqlConnector",
             "snapshot.mode": "schema_only",
-            "database.hostname": "mysql",
+            "database.hostname": "192.168.1.147",
             "database.port": "3306",
             "database.user": "root",
             "database.password": "mysqlpass",
@@ -38,7 +38,7 @@ RUN curl -i -X POST -H "Accept:application/json" \
             "connector.class": "io.confluent.connect.jdbc.JdbcSinkConnector",
             "topics": "cdc.product.users",
             "table.name.format": "prd_users",
-            "connection.url": "jdbc:clickhouse://clickhouse:8123/default",
+            "connection.url": "jdbc:clickhouse://192.168.1.147:8123/default",
             "connection.user": "root",
             "connection.password": "clickpass",
             "tasks.max":"1",

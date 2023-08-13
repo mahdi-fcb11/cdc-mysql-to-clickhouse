@@ -11,12 +11,12 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASS
     ports:
-      - "3306:3306"
+      - "6603:3306"
     volumes:
-      - ./volumes/mysql_data:/var/lib/mysql
+      - ../volumes/mysql_data:/var/lib/mysql
 
   clickhouse:
-    image: clickhouse/clickhouse-server:23.7.1.2470
+    image: clickhouse/clickhouse-server:21.3.20.1
     restart: always
     networks:
       - Kafka_zoo_connectors
@@ -29,8 +29,8 @@ services:
       - "8123:8123"
       - "9000:9000"
     volumes:
-      - ./volumes/ch_data:/var/lib/clickhouse
-      - ./volumes/ch_logs:/var/log/clickhouse-server
+      - ../volumes/ch_data:/var/lib/clickhouse
+      - ../volumes/ch_logs:/var/log/clickhouse-server
 
 networks:
   Kafka_zoo_connectors:
