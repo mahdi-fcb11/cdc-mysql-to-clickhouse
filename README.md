@@ -226,7 +226,7 @@ Utils contains python codes that can be used in other codes.
 │   └── logger.py             <- function for showing logs
 └── volumes 
     ├── connect_plugins       <- plugins for kafka connect
-    └── update_run.sh         <- function for showing logs
+    └── update_run.sh         <- function for using kraft
 ```
 
 ## Data Model
