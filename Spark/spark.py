@@ -1,15 +1,10 @@
-import pyspark
 from pyspark.sql import SparkSession
-from pyspark.sql.types import StructType, StructField, StringType, IntegerType, TimestampType, \
-    FloatType
-import pyspark
-import os
 
-spark = (SparkSession.builder.appName("test-spark").master("spark://192.168.1.147:7077").getOrCreate())
-# spark = (SparkSession.builder.appName("test-spark_4").master("local[*]").getOrCreate())
-# Spark session & context
+spark = (SparkSession.builder.appName("test-spark").master("spark://localhost:7077").getOrCreate())
+
 spark.sparkContext.setLogLevel('WARN')
 
+# connection to kafka stream
 df = spark \
   .readStream \
   .format("kafka") \

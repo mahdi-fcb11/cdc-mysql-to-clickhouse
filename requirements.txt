@@ -1,3 +1,5 @@
 mysql-connector-python~=8.1.0
+clickhouse-connect==0.6.8
 Faker~=19.2.0
 pyspark~=3.2.4
+psutil~=5.9.5

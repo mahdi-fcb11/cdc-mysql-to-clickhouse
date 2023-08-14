@@ -11,7 +11,7 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASS
     ports:
-      - "6603:3306"
+      - "3306:3306"
     volumes:
       - ../volumes/mysql_data:/var/lib/mysql
 
@@ -21,7 +21,6 @@ services:
     networks:
       - Kafka_zoo_connectors
     environment:
-      CLICKHOUSE_DB: $CH_DB
       CLICKHOUSE_USER: $CH_USER
       CLICKHOUSE_PASSWORD: $CH_PASS
       CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT: 1
