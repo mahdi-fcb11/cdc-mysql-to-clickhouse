@@ -245,4 +245,4 @@ In mysql database (product) we have only one table called users. Users table dat
 
 ## Author
 
-[Mahsa Fathi](https://www.linkedin.com/in/mahsa-fathi-68216112b/), Data Engineer
+[Mahdi Zarei](https://www.linkedin.com/in/mahdi-zarei-yazd-6674a4191/), Data Engineer
